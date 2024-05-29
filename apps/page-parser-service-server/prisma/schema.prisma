@@ -1,0 +1,35 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model ParsedContent {
+  content   String?
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  link      Link?    @relation(fields: [linkId], references: [id])
+  linkId    String?
+  updatedAt DateTime @updatedAt
+}
+
+model Project {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  links     Link[]
+  name      String?
+  updatedAt DateTime @updatedAt
+}
+
+model Link {
+  createdAt      DateTime        @default(now())
+  id             String          @id @default(cuid())
+  parsedContents ParsedContent[]
+  project        Project?        @relation(fields: [projectId], references: [id])
+  projectId      String?
+  updatedAt      DateTime        @updatedAt
+  url            String?
+}
